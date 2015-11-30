@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/melvinmt/firebase"
@@ -34,8 +35,15 @@ func (d DomainStore) Domain() (domain string, err error) {
 func (d DomainStore) History() (domains []Domain, err error) {
 	var m map[string]Domain
 	err = d.history.Value(&m)
-	for _, val := range m {
-		domains = append(domains, val)
+
+	var keys []string
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		domains = append(domains, m[k])
 	}
 	return domains, err
 }
