@@ -2,16 +2,25 @@ package main // import "github.com/ethernetdan/populardns"
 
 import (
 	"encoding/json"
+	"fmt"
+	"html/template"
 	"io/ioutil"
-	"log"
+	"net"
+	"net/http"
 	"os"
 
-	"github.com/pearkes/cloudflare"
+	log "github.com/Sirupsen/logrus"
+	"github.com/ethernetdan/cloudflare"
 )
 
 const defaultConfigFile = "config.json"
 
-var client cloudflare.Client
+var (
+	config   Config
+	store    DomainStore
+	cf       *cloudflare.Client
+	recordId string
+)
 
 func init() {
 	configFile := defaultConfigFile
@@ -24,8 +33,98 @@ func init() {
 		log.Panicf("Could not read configuration file: %v", err)
 	}
 
-	err = json.Unmarshal(data, &client)
+	err = json.Unmarshal(data, &config)
 	if err != nil {
 		log.Panicf("Could not unmarshal configuration struct from file `%s`: %v", configFile, err)
 	}
+}
+
+func main() {
+	log.Infof("Starting up Popular DNS for domain `%s`...", config.Domain)
+
+	cfClient, err := cloudflare.NewClient(config.CloudFlareEmail, config.CloudFlareToken)
+	if err != nil {
+		log.Panicf("Could not create CloudFlare client for email `%s`: %v", config.CloudFlareEmail, err)
+	} else {
+		cf = cfClient
+	}
+
+	record, err := createOrGetRecord(config.Domain, config.Domain)
+	if err != nil {
+		log.Panic(err)
+	} else {
+		recordId = record.Id
+	}
+
+	store = NewDomainStore(config.FirebaseURL, config.FirebaseAuth)
+
+	http.HandleFunc("/", view)
+	http.HandleFunc("/set", set)
+	http.ListenAndServe(":8080", nil)
+}
+
+type PageData struct {
+	Domain        string
+	CurrentDomain string
+	History       []Domain
+}
+
+func set(w http.ResponseWriter, r *http.Request) {
+	domain := r.FormValue("domain")
+
+	// check if valid domain
+	if addrs, err := net.LookupIP(domain); err != nil {
+		err = fmt.Errorf("Failed to resolve entered host(%s): %v", domain, err)
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	} else if len(addrs) < 1 {
+		err = fmt.Errorf("No IPs associated with host `%s`", domain)
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	err := updateRecord(config.Domain, recordId, config.Domain, domain)
+	if err != nil {
+		err = fmt.Errorf("Failed to update record: %v", err)
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	err = store.Set(domain)
+	if err != nil {
+		err = fmt.Errorf("Failed to persist update info: %v", err)
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintf(w, "Successfully switched to %s", domain)
+}
+
+func view(w http.ResponseWriter, r *http.Request) {
+	currentDomain, err := store.Domain()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	history, err := store.History()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	pageData := PageData{
+		Domain:        config.Domain,
+		CurrentDomain: currentDomain,
+		History:       history,
+	}
+	renderTemplate(w, "home", &pageData)
+}
+
+func renderTemplate(w http.ResponseWriter, tmpl string, d *PageData) {
+	t, _ := template.ParseFiles(tmpl + ".html")
+	t.Execute(w, d)
 }

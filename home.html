@@ -1,0 +1,16 @@
+<h1>Choose {{.Domain}}...</h1>
+
+<form action="/set" method="POST">
+    <div>
+        <label for="domain">Domain:</label>
+        <input type="text" id="domain" name="domain"><br>
+        <input type="submit" value="Submit">
+    </div>
+</form>
+<h1>Current Domain: {{.CurrentDomain}}</h1>
+<h1>History</h1>
+<ul>
+{{range .History}}
+    <li>{{.Time | printf "%v"}} - {{.Name}}</li>
+{{end}}
+</ul>
