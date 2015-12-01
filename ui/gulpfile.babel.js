@@ -19,6 +19,7 @@ import notifier from 'node-notifier'
 import buffer from 'vinyl-buffer'
 import source from 'vinyl-source-stream'
 import watchify from 'watchify'
+import inject from 'inject';
 
 // ERROR HANDLER
 
