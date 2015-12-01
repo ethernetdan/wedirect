@@ -10,7 +10,7 @@
 <h1>Current Domain: {{.CurrentDomain}}</h1>
 <h1>History</h1>
 <ul>
-{{range .History}}
-    <li>{{.Time | printf "%v"}} - {{.Name}}</li>
+{{range $i, $e := .History}}
+    <li>{{$e.Time.Month | printf "%d" }}/{{$e.Time.Day}}/{{$e.Time.Year}} - {{$e.Name}} - {{if eq $i 0}}active{{else}}inactive{{end}}</li>
 {{end}}
 </ul>

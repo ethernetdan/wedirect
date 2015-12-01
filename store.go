@@ -40,7 +40,7 @@ func (d DomainStore) History() (domains []Domain, err error) {
 	for k := range m {
 		keys = append(keys, k)
 	}
-	sort.Strings(keys)
+	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
 
 	for _, k := range keys {
 		domains = append(domains, m[k])
