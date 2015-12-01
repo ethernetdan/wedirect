@@ -1,4 +1,4 @@
-package main // import "github.com/ethernetdan/populardns"
+package main // import "github.com/ethernetdan/wedirect"
 
 import (
 	"encoding/json"
