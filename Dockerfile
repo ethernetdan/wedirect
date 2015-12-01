@@ -4,7 +4,7 @@ FROM scratch
 COPY wedirect /
 
 # If does not exist create from config.json.example
-COPY config.json / 
+COPY config.json /
 
 # Container settings
 EXPOSE 8080
