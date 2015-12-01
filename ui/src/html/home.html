@@ -25,11 +25,11 @@
     </div>
 
     <div class="history">
-      {{range .History}}
+      {{range $i, $e := .History}}
         <p>
-          <span class="history-date">{{.Time | printf "%v"}}</span>
-          <span class="history-link">{{.Name}}</span>
-          <span class="history-status">inactive</span>
+          <span class="history-date">{{$e.Time.Month | printf "%d" }}/{{$e.Time.Day}}/{{$e.Time.Year}}</span>
+          <span class="history-link">{{$e.Name}}</span>
+          <span class="history-status">{{if eq $i 0}}live{{else}}inactive{{end}}</span>
         </p>
       {{end}}
     </div>
@@ -38,6 +38,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 
   <script>
+    function getDate() {
+      var dateObj = new Date();
+      var month = dateObj.getUTCMonth() + 1; //months from 1-12
+      var day = dateObj.getUTCDate();
+      var year = dateObj.getUTCFullYear();
+
+      return month + "/" + day + "/"  + year;
+    }
+
     function submit() {
       if ($('.info-input').val()) {
 
@@ -48,8 +57,12 @@
           data: { domain: $('.info-input').val()}
         })
         .done(function(data) {
+          $('.history p').eq(0).find('span').eq(2).text('inactive')
+          $('.history').prepend(
+            '<p class="fade-in"><span class="history-date">'+getDate()+'</span> <span class="history-link">' + $('.info-input').val() +'</span> <span class="history-status">live</span></p>'
+          );
           $('.info-input').val('')
-          $('.history').prepend('<p class="fade-in"><span class="history-date">2015-11-30 18:13:31.535627627 -0500 EST</span> <span class="history-link">redspread.com</span> <span class="history-status">inactive</span></p>');
+
 
         })
         .fail(function() {
