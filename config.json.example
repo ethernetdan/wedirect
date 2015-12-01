@@ -1,0 +1,9 @@
+{
+    "CloudFlareEmail": "cloudflare@example.com",
+    "CloudFlareToken": "asdlkfjksldjflk",
+
+    "FirebaseURL": "https://example.firebaseio.com",
+    "FirebaseAuth": "ewirjoiwejrfoielksjdf",
+
+    "Domain": "example.com"
+}
