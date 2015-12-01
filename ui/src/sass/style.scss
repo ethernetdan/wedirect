@@ -1,0 +1,41 @@
+@import "mixins";
+@import "reset";
+
+$mono: "PT Mono", monospace;
+$red: #f00;
+$purple: #203;
+$green: #00ff80;
+
+html {
+  font-size: 18px;
+}
+
+body {
+  padding-top: 130px;
+  border-top: 10px solid $red;
+  background-color: $purple;
+  color: white;
+  font-family: $mono;
+  font-size: 1em;
+  letter-spacing: 4px;
+  line-height: 22px;
+}
+
+.container {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.heading {
+  margin-bottom: 120px;
+  text-transform: uppercase;
+  &::after {
+    display: inline-block;
+    margin-left: 10px;
+    content: "»";
+  }
+}
+
+
+@import "info";
+@import "history";

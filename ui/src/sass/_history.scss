@@ -1,0 +1,41 @@
+.history {
+  margin-top: 100px;
+
+  p {
+    margin-bottom: 40px;
+  }
+
+  p:first-of-type {
+    span:nth-of-type(3) {
+      opacity: .5;
+      color: $green;
+    }
+  }
+}
+
+.fade-in {
+  animation: 2s ease fade;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.history-date {
+  margin-right: 40px;
+}
+
+.history-link {
+  width: 210px;
+  display: inline-block;
+}
+
+.history-status {
+  opacity: .25;
+}

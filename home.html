@@ -1,16 +1,34 @@
-<h1>Choose {{.Domain}}...</h1>
+<!DOCTYPE html><html lang="en-US"><head><title>Wedirect</title><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link href="https://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet" type="text/css"><style>@charset "UTF-8";a,body,div,footer,form,h1,h2,h3,h4,h5,h6,header,hr,html,img,input,label,li,main,nav,ol,p,section,span,svg,ul{margin:0;padding:0;border:none;font:inherit;vertical-align:baseline}*,::after,::before{box-sizing:border-box}iframe,img,video{max-width:100%}svg:not(:root){overflow:hidden}input{border-radius:0}::-webkit-input-placeholder{opacity:1}::-moz-placeholder{opacity:1}:-ms-input-placeholder{opacity:1}::placeholder{opacity:1}a{background-color:transparent;text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent;outline:0}.info-input,body{background-color:#203}html{font-size:18px}body{padding-top:130px;border-top:10px solid red;color:#fff;font-family:"PT Mono",monospace;font-size:1em;letter-spacing:4px;line-height:22px}.container{max-width:780px;margin:0 auto}.heading{margin-bottom:120px;text-transform:uppercase}.history p,.info p{margin-bottom:40px}.heading::after{display:inline-block;margin-left:10px;content:"»"}.info{font-size:36px;letter-spacing:2px}.info-link{color:red}.info-container{position:relative}.info-input{width:90%;padding-right:40px;padding-bottom:10px;border:none;border-bottom:2px solid red;outline:0;color:red}.info-submit{position:absolute;top:10px;right:16px;-webkit-transition:all ease-in-out .22s;transition:all ease-in-out .22s;font-size:24px;opacity:.25}.info-submit.active{color:red;opacity:1}.info-submit.failed{-webkit-animation:.8s ease-in-out shake;animation:.8s ease-in-out shake}@-webkit-keyframes shake{from,to{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}10%,30%,50%,70%,90%{-webkit-transform:translate3d(-3px,0,0);transform:translate3d(-3px,0,0)}20%,40%,60%,80%{-webkit-transform:translate3d(3px,0,0);transform:translate3d(3px,0,0)}}@keyframes shake{from,to{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}10%,30%,50%,70%,90%{-webkit-transform:translate3d(-3px,0,0);transform:translate3d(-3px,0,0)}20%,40%,60%,80%{-webkit-transform:translate3d(3px,0,0);transform:translate3d(3px,0,0)}}.history{margin-top:100px}.history p:first-of-type span:nth-of-type(3){opacity:.5;color:#00ff80}.fade-in{-webkit-animation:2s ease fade;animation:2s ease fade}@-webkit-keyframes fade{from{opacity:0}to{opacity:1}}@keyframes fade{from{opacity:0}to{opacity:1}}.history-date{margin-right:40px}.history-link{width:210px;display:inline-block}.history-status{opacity:.25}</style></head><body><div class="container"><h1 class="heading">Wedirect</h1><div class="info"><p>redirect <a href="#" class="info-link">{{.CurrentDomain}}</a></p><p class="info-container"><a class="info-submit">»</a> to <input type="text" class="info-input"></p></div><div class="history">{{range .History}}<p><span class="history-date">{{.Time | printf "%v"}}</span> <span class="history-link">{{.Name}}</span> <span class="history-status">inactive</span></p>{{end}}</div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script><script>function submit() {
+      if ($('.info-input').val()) {
 
-<form action="/set" method="POST">
-    <div>
-        <label for="domain">Domain:</label>
-        <input type="text" id="domain" name="domain"><br>
-        <input type="submit" value="Submit">
-    </div>
-</form>
-<h1>Current Domain: {{.CurrentDomain}}</h1>
-<h1>History</h1>
-<ul>
-{{range .History}}
-    <li>{{.Time | printf "%v"}} - {{.Name}}</li>
-{{end}}
-</ul>
+        $('.info-submit').removeClass('failed');
+        $.ajax({
+          url: '/set',
+          method: 'POST',
+          data: { domain: $('.info-input').val()}
+        })
+        .done(function(data) {
+          $('.info-input').val('')
+          $('.history').prepend('<p class="fade-in"><span class="history-date">2015-11-30 18:13:31.535627627 -0500 EST</span> <span class="history-link">redspread.com</span> <span class="history-status">inactive</span></p>');
+
+        })
+        .fail(function() {
+          $('.info-submit').addClass('failed');
+        });
+      }
+    }
+
+    $(document).ready(function() {
+
+      $('.info-input').on('input',function() {
+        $('.info-submit').addClass('active');
+        if ($(this).val() === '')
+          $('.info-submit').removeClass('active');
+      });
+
+      $('.info-submit').click(submit);
+      $('.info-input').keyup(function(event){
+          if(event.keyCode == 13)
+            submit()
+      });
+    });</script></body></html>
