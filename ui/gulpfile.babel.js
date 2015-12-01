@@ -19,7 +19,6 @@ import notifier from 'node-notifier'
 import buffer from 'vinyl-buffer'
 import source from 'vinyl-source-stream'
 import watchify from 'watchify'
-import inject from 'inject';
 
 // ERROR HANDLER
 
@@ -39,7 +38,6 @@ gulp.task('html', () => {
   return gulp.src('src/html/**/*.html')
     .pipe(plumber({ errorHandler: onError }))
     .pipe(fileinclude({ prefix: '@' }))
-    .pipe(htmlmin({ collapseWhitespace: true, removeComments: true }))
     .pipe(gulp.dest('../'))
     .pipe(connect.reload())
 })
@@ -52,7 +50,7 @@ gulp.task('sass', () => {
     .pipe(sass())
     .pipe(autoprefixer({ browsers: [ 'last 2 versions', 'ie >= 9', 'Android >= 4.1' ] }))
     .pipe(minify())
-    .pipe(gulp.dest('../'))
+    .pipe(gulp.dest('dist'))
     .pipe(connect.reload())
 })
 

@@ -1,1 +1,39 @@
-<!DOCTYPE html><html lang="en-US"><head><title>Wedirect</title><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link href="https://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet" type="text/css"><link rel="stylesheet" href="./style.css"></head><body><div class="container"><h1 class="heading">Wedirect</h1><div class="info"><p>redirect <a href="#" class="info-link">{{.Domain}}</a></p><p class="info-container"><a class="info-submit">»</a> to <input type="text" class="info-input"></p></div><div class="history">{{range $i, $e := .History}}<p><span class="history-date">{{$e.Time.Month | printf "%d" }}/{{$e.Time.Day}}/{{$e.Time.Year}}</span> <span class="history-link">{{$e.Name}}</span> <span class="history-status">{{if eq $i 0}}live{{else}}inactive{{end}}</span></p>{{end}}</div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script><script src="./scripts.js"></script></body></html>
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <title>Wedirect</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href='https://fonts.googleapis.com/css?family=PT+Mono' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="./ui/dist/style.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1 class="heading">Wedirect</h1>
+
+    <div class="info">
+      <p>redirect <a href="#" class="info-link">{{.Domain}}</a></p>
+      <p class="info-container">
+        <a class="info-submit">»</a>
+        to <input type="text" class="info-input">
+      </p>
+    </div>
+
+    <div class="history">
+      {{range $i, $e := .History}}
+        <p>
+          <span class="history-date">{{$e.Time.Month | printf "%d" }}/{{$e.Time.Day}}/{{$e.Time.Year}}</span>
+          <span class="history-link">{{$e.Name}}</span>
+          <span class="history-status">{{if eq $i 0}}live{{else}}inactive{{end}}</span>
+        </p>
+      {{end}}
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <!-- // <script src="./scripts.js"></script> -->
+</body>
+</html>

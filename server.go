@@ -59,8 +59,9 @@ func main() {
 
 	store = NewDomainStore(config.FirebaseURL, config.FirebaseAuth)
 
-	http.HandleFunc("/", view)
+	http.Handle("/ui/dist", http.FileServer(http.Dir("./ui/dist/")))
 	http.HandleFunc("/set", set)
+	http.HandleFunc("/", view)
 	http.ListenAndServe(":8080", nil)
 
 }
