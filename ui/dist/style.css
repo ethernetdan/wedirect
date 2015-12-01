@@ -159,6 +159,16 @@ body {
   -webkit-animation: 2s ease fade;
           animation: 2s ease fade; }
 
+.history-date {
+  margin-right: 40px; }
+
+.history-link {
+  display: inline-block;
+  width: 210px; }
+
+.history-status {
+  opacity: .25; }
+
 @-webkit-keyframes fade {
   from {
     opacity: 0; }
@@ -170,13 +180,3 @@ body {
     opacity: 0; }
   to {
     opacity: 1; } }
-
-.history-date {
-  margin-right: 40px; }
-
-.history-link {
-  display: inline-block;
-  width: 210px; }
-
-.history-status {
-  opacity: .25; }
