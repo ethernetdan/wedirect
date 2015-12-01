@@ -100,7 +100,8 @@ body {
   -webkit-transition: all ease-in-out .22s;
   transition: all ease-in-out .22s;
   font-size: 24px;
-  opacity: .25; }
+  opacity: .25;
+  cursor: pointer; }
   .info-submit.active {
     color: red;
     opacity: 1; }

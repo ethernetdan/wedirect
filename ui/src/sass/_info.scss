@@ -32,6 +32,7 @@
   transition: all ease-in-out .22s;
   font-size: 24px;
   opacity: .25;
+  cursor: pointer;
   &.active {
     color: red;
     opacity: 1;

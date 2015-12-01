@@ -1,6 +1,7 @@
 'use strict';
 
 var $input = $('.info-input');
+var $infoSubmit = $('.info-submit');
 
 function getDate() {
   var date = new Date();
@@ -14,7 +15,7 @@ function getDate() {
 function submit() {
   if ($input.val()) {
 
-    $('.info-submit').removeClass('failed');
+    $infoSubmit.removeClass('failed');
     $.ajax({
       url: '/set',
       method: 'POST',
@@ -28,7 +29,7 @@ function submit() {
       $input.val('');
     })
     .fail(function() {
-      $('.info-submit').addClass('failed');
+      $infoSubmit.addClass('failed');
     });
   }
 }
@@ -36,13 +37,13 @@ function submit() {
 $(document).ready(function() {
 
   $input.on('input',function() {
-    $('.info-submit').addClass('active');
+    $infoSubmit.addClass('active');
 
     if ($(this).val() === '')
-      $('.info-submit').removeClass('active');
+      $infoSubmit.removeClass('active');
   });
 
-  $('.info-submit').click(submit);
+  $infoSubmit.click(submit);
 
   $input.keyup(function(event){
     if(event.keyCode == 13)
