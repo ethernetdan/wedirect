@@ -60,7 +60,8 @@ body {
   line-height: 22px; }
 
 .container {
-  max-width: 780px;
+  max-width: 860px;
+  padding: 0 40px;
   margin: 0 auto; }
 
 .heading {
