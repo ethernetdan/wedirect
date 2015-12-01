@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strings"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/ethernetdan/cloudflare"
@@ -80,7 +81,15 @@ func set(w http.ResponseWriter, r *http.Request) {
 		return
 	} else if len(addrs) < 1 {
 		err = fmt.Errorf("No IPs associated with host `%s`", domain)
+		log.Warn(err)
 		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	if current, err := store.Domain(); strings.ToLower(current) == strings.ToLower(domain) {
+		err = fmt.Errorf("Already set to `%s`", domain)
+		log.Warn(err)
+		http.Error(w, err.Error(), http.StatusConflict)
 		return
 	}
 
