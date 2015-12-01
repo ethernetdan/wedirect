@@ -42,6 +42,15 @@ gulp.task('html', () => {
     .pipe(connect.reload())
 })
 
+// JS
+
+gulp.task('js', () => {
+  return gulp.src('src/js/**/*.js')
+    .pipe(plumber({ errorHandler: onError }))
+    .pipe(gulp.dest('dist'))
+    .pipe(connect.reload())
+})
+
 // SASS
 
 gulp.task('sass', () => {
@@ -59,9 +68,10 @@ gulp.task('sass', () => {
 gulp.task('watch', () => {
   gulp.watch('src/html/**/*.html', ['html'])
   gulp.watch('src/sass/**/*.scss', ['sass'])
+  gulp.watch('src/js/**/*.js', ['js'])
 })
 
 // TASKS
 
-gulp.task('build', ['html', 'sass'])
+gulp.task('build', ['html', 'sass', 'js'])
 gulp.task('default', ['build', 'watch'])
