@@ -10,3 +10,16 @@ Open up control of the A record of a domain to the masses.
 
 ## Docker
 A minimal Docker container can be built by running `./build-docker.sh <image name>`
+
+## UI
+
+Make sure you have the following installed
+
+* node >= v4.0.0
+* npm
+* gulp
+
+Then run the following commands in the UI directory
+
+* npm install
+* gulp
