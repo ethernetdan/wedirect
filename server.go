@@ -8,7 +8,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"strings"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/ethernetdan/cloudflare"
@@ -88,7 +87,7 @@ func set(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if current, err := store.Domain(); strings.ToLower(current) == strings.ToLower(domain) {
+	if current, err := store.Domain(); current == domain {
 		err = fmt.Errorf("Already set to `%s`", domain)
 		log.Warn(err)
 		http.Error(w, err.Error(), http.StatusConflict)

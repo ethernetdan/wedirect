@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/melvinmt/firebase"
@@ -49,6 +50,7 @@ func (d DomainStore) History() (domains []Domain, err error) {
 }
 
 func (d DomainStore) Set(domainName string) error {
+	domainName = strings.ToLower(domainName)
 	domain := Domain{
 		Time: time.Now(),
 		Name: domainName,
