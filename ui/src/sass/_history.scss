@@ -15,16 +15,6 @@
   animation: 2s ease fade;
 }
 
-@keyframes fade {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
 .history-date {
   margin-right: 40px;
 }
@@ -36,4 +26,14 @@
 
 .history-status {
   opacity: .25;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }

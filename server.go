@@ -135,6 +135,6 @@ func view(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, d *PageData) {
-	t, _ := template.ParseFiles(tmpl + ".html")
+	t, _ := template.ParseFiles("ui/dist/" + tmpl + ".html")
 	t.Execute(w, d)
 }

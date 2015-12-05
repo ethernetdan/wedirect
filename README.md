@@ -23,3 +23,8 @@ Then run the following commands in the UI directory
 
 * npm install
 * gulp
+
+
+## License
+
+[MIT](https://github.com/ethernetdan/wedirect/blob/master/LICENSE)

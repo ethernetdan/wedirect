@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href='https://fonts.googleapis.com/css?family=PT+Mono' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="/ui/dist/style.css">
+  <link rel="stylesheet" href="ui/dist/style.css">
 </head>
 <body>
 
@@ -18,7 +18,7 @@
       <p>redirect <a href="#" class="info-link">{{.Domain}}</a></p>
       <p class="info-container">
         <a class="info-submit">»</a>
-        to <input type="text" class="info-input">
+        to <input type="text" class="info-input" spellcheck="false">
       </p>
     </div>
 
@@ -26,7 +26,7 @@
       {{range $i, $e := .History}}
         <p>
           <span class="history-date">{{$e.Time.Month | printf "%d" }}/{{$e.Time.Day}}/{{$e.Time.Year}}</span>
-          <span class="history-link">{{$e.Name}}</span>
+          <span class="history-link"><a href="http://{{$e.Name}}">{{$e.Name}}</a></span>
           <span class="history-status">{{if eq $i 0}}live{{else}}inactive{{end}}</span>
         </p>
       {{end}}
@@ -34,6 +34,6 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-  <script src="/ui/dist/scripts.js"></script>
+  <script src="ui/dist/scripts.js"></script>
 </body>
 </html>
