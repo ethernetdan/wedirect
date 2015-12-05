@@ -1,5 +1,5 @@
 # wedirect
-
+<img src="https://github.com/ethernetdan/wedirect/blob/master/demo.png">
 Open up control of the A record of a domain to the masses.
 
 ## Setup
