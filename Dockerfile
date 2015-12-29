@@ -1,7 +1,8 @@
-FROM scratch
+FROM centurylink/ca-certs
 
 # Copy executable and config
 COPY wedirect /
+COPY ui /ui
 
 # If does not exist create from config.json.example
 COPY config.json /

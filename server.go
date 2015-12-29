@@ -5,21 +5,19 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
-	"net"
 	"net/http"
+	"net/url"
 	"os"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/ethernetdan/cloudflare"
 )
 
 const defaultConfigFile = "config.json"
 
 var (
-	config   Config
-	store    DomainStore
-	cf       *cloudflare.Client
-	recordId string
+	config Config
+	store  DomainStore
+	proxy  *WedirectProxy
 )
 
 func init() {
@@ -40,29 +38,33 @@ func init() {
 }
 
 func main() {
-	log.Infof("Starting up Popular DNS for domain `%s`...", config.Domain)
-
-	cfClient, err := cloudflare.NewClient(config.CloudFlareEmail, config.CloudFlareToken)
-	if err != nil {
-		log.Panicf("Could not create CloudFlare client for email `%s`: %v", config.CloudFlareEmail, err)
-	} else {
-		cf = cfClient
-	}
-
-	record, err := createOrGetRecord(config.Domain, config.Domain)
-	if err != nil {
-		log.Panic(err)
-	} else {
-		recordId = record.Id
-	}
+	log.Infof("Starting up Wedirect for domain `%s`...", config.Domain)
 
 	store = NewDomainStore(config.FirebaseURL, config.FirebaseAuth)
 
-	http.Handle("/ui/dist/", http.StripPrefix("/ui/dist/", http.FileServer(http.Dir("ui/dist"))))
-	http.HandleFunc("/set", set)
-	http.HandleFunc("/", view)
-	http.ListenAndServe(":8080", nil)
+	// Setup proxy, use current if available
+	destination := fmt.Sprintf("http://%s:8080", config.Domain)
+	if current, err := store.Domain(); err == nil {
+		destination = current
+	}
 
+	url, err := url.Parse(destination)
+	proxy = NewWedirectProxy(url)
+	if err != nil {
+		log.Fatalf("Failed to parse URL from domain: %s", config.Domain)
+	}
+
+	go func() {
+		http.ListenAndServe(":80", proxy)
+	}()
+
+	// Configure UI
+	ui := http.NewServeMux()
+	ui.Handle("/ui/dist/", http.StripPrefix("/ui/dist/", http.FileServer(http.Dir("ui/dist"))))
+	ui.HandleFunc("/set", set)
+	ui.HandleFunc("/", view)
+
+	http.ListenAndServe(":8080", ui)
 }
 
 type PageData struct {
@@ -72,37 +74,28 @@ type PageData struct {
 }
 
 func set(w http.ResponseWriter, r *http.Request) {
-	domain := r.FormValue("domain")
+	urlInput := r.FormValue("domain")
 
-	// check if valid domain
-	if addrs, err := net.LookupIP(domain); err != nil {
-		err = fmt.Errorf("Failed to resolve entered host(%s): %v", domain, err)
-		log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	} else if len(addrs) < 1 {
-		err = fmt.Errorf("No IPs associated with host `%s`", domain)
+	u, err := url.Parse(urlInput)
+	if err != nil {
+		err = fmt.Errorf("Could not parse `%s`: %v", urlInput, err)
 		log.Warn(err)
-		http.Error(w, err.Error(), http.StatusNotFound)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if current, err := store.Domain(); current == domain {
-		err = fmt.Errorf("Already set to `%s`", domain)
+	urlStr := u.String()
+	if current, err := store.Domain(); current == urlStr {
+		err = fmt.Errorf("Already set to `%s`", current)
 		log.Warn(err)
 		http.Error(w, err.Error(), http.StatusConflict)
 		return
 	}
 
-	err := updateRecord(config.Domain, recordId, config.Domain, domain)
-	if err != nil {
-		err = fmt.Errorf("Failed to update record: %v", err)
-		log.Error(err)
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
+	// Change reverse proxy destination
+	proxy.Change(u)
 
-	err = store.Set(domain)
+	err = store.Set(urlStr)
 	if err != nil {
 		err = fmt.Errorf("Failed to persist update info: %v", err)
 		log.Error(err)
@@ -110,7 +103,7 @@ func set(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "Successfully switched to %s", domain)
+	fmt.Fprintf(w, "Successfully switched to %s", urlStr)
 }
 
 func view(w http.ResponseWriter, r *http.Request) {
